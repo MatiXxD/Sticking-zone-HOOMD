@@ -52,7 +52,7 @@ TwoStepBDGPU::TwoStepBDGPU(std::shared_ptr<SystemDefinition> sysdef,
     pitsFile >> mySigma1;                                                        //radius
     mySigma1 *= mySigma1;
         
-    while(1){
+    while(nMax < SIZE){
         
         double temp1 = 0;
         double temp2 = 0;
