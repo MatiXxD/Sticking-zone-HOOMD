@@ -8,12 +8,12 @@ class MakeDiagram{
     std::string s;
     std::fstream f;
 
-    const unsigned N = 3600;
-    const unsigned SPLIT_PARAM = 15;
-    const unsigned FRAMES_HANDLE = 10;
-    const unsigned FRAMES_SKIP = 20;
+    const unsigned N = 3600;                        // Number of particles
+    const unsigned SPLIT_PARAM = 15;                // Number by which the system is divided
+    const unsigned FRAMES_HANDLE = 10;              // Frames which gonna be handled
+    const unsigned FRAMES_SKIP = 20;                // Need to skip system's relaxation
 
-    const double LEN_X = 569.8768003947 * 2.0;
+    const double LEN_X = 569.8768003947 * 2.0;      // System size in X direction
 
     double *x;
     double *arrN;
