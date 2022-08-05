@@ -2,24 +2,30 @@
 #include <fstream>
 #include <string>
 
+#define EPS_NUM 14
+
 
 class MakeDiagram{
 
     std::string s;
     std::fstream f;
 
-    const unsigned N = 3600;                        // Number of particles
-    const unsigned SPLIT_PARAM = 15;                // Number by which the system is divided
-    const unsigned FRAMES_HANDLE = 10;              // Frames which gonna be handled
-    const unsigned FRAMES_SKIP = 20;                // Need to skip system's relaxation
+    const unsigned N = 3600;
+    const unsigned SPLIT_PARAM = 15;
+    const unsigned FRAMES_HANDLE = 10;
+    const unsigned FRAMES_SKIP = 200;
+    const unsigned epsArray[EPS_NUM] = {1, 3, 5, 7, 9, 11, 13, 15,
+        17, 19, 21, 23, 25, 27};
 
-    const double LEN_X = 569.8768003947 * 2.0;      // System size in X direction
+    const double LEN_X = 569.8768003947 * 2.0;
+    
 
     double *x;
     double *arrN;
 
+
 public:
-    MakeDiagram(std::string name, int epsNum);
+    MakeDiagram(std::string dir, std::string name);
     ~MakeDiagram();
     void readHeader();
     void skipFrame();
@@ -29,15 +35,18 @@ public:
     void writeRes(int outNum);
 };
 
-MakeDiagram::MakeDiagram(std::string name, int epsNum){
-
-    f.open(name.c_str());
+MakeDiagram::MakeDiagram(std::string dir, std::string name){
 
     x = new double[N];
     arrN = new double[SPLIT_PARAM];
 
-    for(int rep = 0 ; rep < epsNum ; rep++){
+    for(int rep = 0 ; rep < EPS_NUM ; rep++){
         
+        // Open file to read data 
+        std::string nameOut = dir + name + std::to_string(epsArray[rep]) + ".txt";
+        std::cout << "Work with file : " << nameOut << '\n';
+        f.open(nameOut.c_str());
+
         // Skip frames which correspond to system's relaxation
         for(int i = 0 ; i < FRAMES_SKIP ; i++){
             readHeader();
@@ -55,7 +64,10 @@ MakeDiagram::MakeDiagram(std::string name, int epsNum){
         }
         
         // Write results in file
-        writeRes(epsNum);
+        writeRes(rep);
+
+        // Close file
+        f.close();
 
     }
 
@@ -65,8 +77,6 @@ MakeDiagram::~MakeDiagram(){
 
     delete[] x;
     delete[] arrN;
-
-    f.close();
 
 }
 
@@ -126,7 +136,7 @@ void MakeDiagram::getN(){
 void MakeDiagram::writeRes(int outNum){
  
     std::ofstream fout;
-    std::string name = "/home/ilya/MD/phaseDiagram/dump/main/dump_" + std::to_string(outNum) + ".txt";
+    std::string name = "/home/ilya/MD/phaseDiagram/dump/main/dump_" + std::to_string(epsArray[outNum]) + ".txt";
     fout.open(name.c_str());
 
     for(int i = 0 ; i < SPLIT_PARAM ; i++)
@@ -138,10 +148,10 @@ void MakeDiagram::writeRes(int outNum){
 
 int main(int argc, char* argv[]){
 
-    int epsNum = 1;
-    std::string name = "dump_test.txt";
+    std::string dir = "/home/ilya/MD/phaseDiagram/dump/hoomdDump/";
+    std::string name = "d_v";
 
-    MakeDiagram(name, epsNum);
+    MakeDiagram(dir, name);
 
     return 0;
 
